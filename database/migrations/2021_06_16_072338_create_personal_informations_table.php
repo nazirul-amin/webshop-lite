@@ -19,6 +19,7 @@ class CreatePersonalInformationsTable extends Migration
             $table->char('identity_no', 20);
             $table->char('phone_no', 20);
             $table->char('age', 3);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
