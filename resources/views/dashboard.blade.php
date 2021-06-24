@@ -305,4 +305,11 @@
 
         </div>
     </div>
+
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2/dist/chart.min.js"></script>
+
+        <script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
+        <script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
+    @endpush
 </x-app-layout>

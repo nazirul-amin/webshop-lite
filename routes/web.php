@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Livewire\Staff\StaffList;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +21,8 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::middleware(['auth:sanctum', 'verified'])->prefix('staff')->name('staff.')->group(function () {
+    Route::get('/list/index', StaffList::class)->name('list.index');
+    // Route::get('/list/add', AddStaff::class)->name('list.add');
+});
