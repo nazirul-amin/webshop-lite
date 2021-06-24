@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Models\PersonalInformation;
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -38,7 +39,11 @@ class CreateNewUser implements CreatesNewUsers
                 'age' => $input['age'],
             ]);
 
+            $currentUserCount = User::where('role_id', Role::where('name', 'Customer')->first()->id)->count();
+            $userNo = 'CUST'.Carbon::now()->format('Y').Carbon::now()->format('m').sprintf('%05d', $currentUserCount + 1);
+
             $user = User::create([
+                'user_no' => $userNo,
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'role_id' => Role::where('name', 'Customer')->first()->id,
