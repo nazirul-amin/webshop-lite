@@ -189,7 +189,7 @@
     </li>
 
     <li class="nav-item">
-        <x-jet-nav-link href="{{ route('staff.list.index') }}" :active="request()->routeIs('staff.list.index')">
+        <x-jet-nav-link href="{{ route('staff.list') }}" :active="request()->routeIs('staff.list')">
             <i class="fas fa-user-friends"></i>
             {{ __('List') }}
         </x-jet-nav-link>
@@ -204,7 +204,7 @@
     </div>
 
     <li class="nav-item">
-        <x-jet-nav-link href="">
+        <x-jet-nav-link href="{{ route('customer.list') }}" :active="request()->routeIs('customer.list')">
             <i class="fas fa-users"></i>
             {{ __('List') }}
         </x-jet-nav-link>
