@@ -16,7 +16,7 @@
                         <label class="custom-control-label" for="checkAll"></label>
                     </div>
                 </th>
-                <th><strong>Staff No</strong></th>
+                <th><strong>Staff ID</strong></th>
                 <th><strong>Name</strong></th>
                 <th><strong>Identity No</strong></th>
                 <th><strong>Phone No</strong></th>
@@ -50,8 +50,12 @@
                     </td>
                     <td>
                         <div class="d-flex">
-                            <a href="#" class="btn btn-primary shadow btn-xs sharp mr-1" wire:click="confirmUpdateStaff({{ $staff->id }})"><i class="fas fa-edit"></i></a>
-                            <a href="#" class="btn btn-danger shadow btn-xs sharp" wire:click="deleteStaff({{ $staff->id }})"><i class="fas fa-trash"></i></a>
+                            <a href="#" class="btn btn-primary shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Edit" wire:click="confirmUpdateStaff({{ $staff->id }})"><i class="fas fa-edit"></i></a>
+                            @if ($staff->deleted_at)
+                                <a href="#" class="btn btn-success shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Activate" wire:click="confirmActivateStaff({{ $staff->id }})"><i class="fas fa-toggle-on"></i></a>
+                            @else
+                                <a href="#" class="btn btn-danger shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Deactivate" wire:click="confirmDeactivateStaff({{ $staff->id }})"><i class="fas fa-trash"></i></a>
+                            @endif
                         </div>
                     </td>
                 </tr>
@@ -118,6 +122,44 @@
                 <x-jet-button class="ml-2" type="submit" form="addStaffForm">
                     <div class="spinner-border" role="status" wire:loading wire:target="addStaff"></div>
                     Update
+                </x-jet-button>
+            @endif
+        </x-slot>
+    </x-jet-dialog-modal>
+
+    <!-- Delete Staff Confirmation Modal -->
+    <x-jet-dialog-modal wire:model="confirmingStaffActiveStatus">
+        <x-slot name="title">
+            {{ __($action.' Staff') }}
+        </x-slot>
+
+        <x-slot name="content">
+            @if($message)
+                <div class="alert alert-success">
+                    {{ $message }}
+                </div>
+            @endif
+            {{ __('Are you sure you want to '.strtolower($action).' this user ?') }} <br>
+            {{ __('Staff ID : '.$user->user_no) }} <br>
+            {{ __('Name : '.$user->name) }} <br>
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-jet-secondary-button wire:click="$toggle('confirmingStaffActiveStatus')"
+                                    wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-jet-secondary-button>
+
+            @if ($action == 'Deactivate')
+                <x-jet-danger-button wire:click="deleteStaff({{ $user->id }})" wire:loading.attr="disabled">
+                    <div class="spinner-border" role="status" wire:loading wire:target="deleteStaff"></div>
+                    {{ $action }}
+                </x-jet-danger-button>
+            @endif
+            @if ($action == 'Activate')
+                <x-jet-button wire:click="restoreStaff({{ $user->id }})" wire:loading.attr="disabled" style="background-color: #1cc88a; border-color: #1cc88a">
+                    <div class="spinner-border" role="status" wire:loading wire:target="restoreStaff"></div>
+                    {{ $action }}
                 </x-jet-button>
             @endif
         </x-slot>

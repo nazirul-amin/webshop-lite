@@ -66,6 +66,6 @@ class User extends Authenticatable
 
     public function profile()
     {
-        return $this->hasOne(PersonalInformation::class, 'id', 'info_id');
+        return $this->hasOne(PersonalInformation::class, 'id', 'info_id')->withTrashed();
     }
 }

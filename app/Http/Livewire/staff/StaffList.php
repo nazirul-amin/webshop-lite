@@ -16,6 +16,7 @@ class StaffList extends Component
     use WithPagination;
 
     public $confirmingAddStaff = 'false';
+    public $confirmingStaffActiveStatus = 'false';
 
     public User $user;
     public PersonalInformation $info;
@@ -55,19 +56,36 @@ class StaffList extends Component
     }
 
     /* show modal */
-    public function confirmAddStaff()
-    {
-        $this->action = 'add';
-        $this->confirmingAddStaff = 'true';
-    }
+        public function confirmAddStaff()
+        {
+            $this->action = 'add';
+            $this->confirmingAddStaff = 'true';
+        }
 
-    public function confirmUpdateStaff($id)
-    {
-        $this->action = 'update';
-        $this->user = User::where('id', $id)->first();
-        $this->info = PersonalInformation::where('id', $this->user->info_id)->first();
-        $this->confirmingAddStaff = 'true';
-    }
+        public function confirmUpdateStaff($id)
+        {
+            $this->action = 'update';
+            $this->user = User::where('id', $id)->withTrashed()->first();
+            $this->info = PersonalInformation::where('id', $this->user->info_id)->withTrashed()->first();
+            $this->confirmingAddStaff = 'true';
+        }
+
+        public function confirmActivateStaff($id)
+        {
+            $this->action = 'Activate';
+            $this->closeMessage();
+            $this->user = User::where('id', $id)->withTrashed()->first();
+            $this->confirmingStaffActiveStatus = 'true';
+        }
+
+        public function confirmDeactivateStaff($id)
+        {
+            $this->action = 'Deactivate';
+            $this->closeMessage();
+            $this->user = User::where('id', $id)->first();
+            $this->confirmingStaffActiveStatus = 'true';
+        }
+    /* show modal */
 
     public function addStaff()
     {
@@ -117,7 +135,28 @@ class StaffList extends Component
 
     public function deleteStaff($id)
     {
-        User::where('id', $id)->delete();
+        $user = User::find($id);
+
+        DB::transaction(function() use ($user) {
+            $user->profile()->delete();
+            $user->delete();
+        });
+
+        sleep(2);
+        $this->message = 'Deactivated successfully';
+    }
+
+    public function restoreStaff($id)
+    {
+        $user = User::withTrashed()->find($id);
+
+        DB::transaction(function() use ($user) {
+            $user->profile()->restore();
+            $user->restore();
+        });
+
+        sleep(2);
+        $this->message = 'Activated successfully';
     }
 
     public function closeMessage()
