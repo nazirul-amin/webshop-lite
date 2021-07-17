@@ -18,6 +18,16 @@
 
         @livewireStyles
 
+        @stack('styles')
+
+        <style>
+            .card {
+                box-shadow: 0 20px 40px rgba(0, 0, 0, .2);
+                border-radius: 5px;
+                padding-bottom: 10px
+            }
+        </style>
+
         <!-- Scripts -->
         <script src="{{ mix('js/app.js') }}" defer></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -279,7 +289,7 @@
                 <footer class="sticky-footer bg-white">
                     <div class="container my-auto">
                         <div class="copyright text-center my-auto">
-                            <span>Copyright &copy; Your Website 2020</span>
+                            <span>Develop by &copy; Nazirul Amin 2021</span>
                         </div>
                     </div>
                 </footer>

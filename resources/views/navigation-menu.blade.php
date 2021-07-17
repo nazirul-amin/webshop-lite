@@ -139,9 +139,9 @@
     </div>
 
     <li class="nav-item">
-        <x-jet-nav-link href="">
+        <x-jet-nav-link href="{{ route('product.list') }}" :active="request()->routeIs('product.list')">
             <i class="fas fa-shopping-bag"></i>
-            {{ __('Sales') }}
+            {{ __('List') }}
         </x-jet-nav-link>
     </li>
 

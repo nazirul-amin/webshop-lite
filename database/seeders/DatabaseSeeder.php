@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
@@ -25,5 +26,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->count(50)->create();
+        Product::factory()->count(50)->create();
     }
 }
