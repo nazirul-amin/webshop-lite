@@ -73,9 +73,7 @@
 
         <x-slot name="content">
             @if($message)
-                <div class="alert alert-success">
-                    {{ $message }}
-                </div>
+                @livewire('component.alert-message', ['message' => $message, 'level'=>"success"])
             @endif
             <form id="addStaffForm" {{ ($action == 'add') ? 'wire:submit.prevent=addStaff' : 'wire:submit.prevent=updateStaff' }}>
                 @csrf
@@ -120,7 +118,7 @@
             @endif
             @if ($action == 'update')
                 <x-jet-button class="ml-2" type="submit" form="addStaffForm">
-                    <div class="spinner-border" role="status" wire:loading wire:target="addStaff"></div>
+                    <div class="spinner-border" role="status" wire:loading wire:target="updateStaff"></div>
                     Update
                 </x-jet-button>
             @endif
