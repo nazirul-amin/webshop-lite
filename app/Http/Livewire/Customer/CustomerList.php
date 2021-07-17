@@ -12,11 +12,6 @@ class CustomerList extends Component
 {
     use WithPagination;
 
-    public $confirmingView = 'false';
-
-    public User $user;
-    public PersonalInformation $info;
-
     protected $paginationTheme = 'bootstrap';
 
     protected $rules = [
@@ -27,6 +22,13 @@ class CustomerList extends Component
         'info.age' => 'required|digits:2',
     ];
 
+    public $confirmingView = 'false';
+
+    public User $user;
+    public PersonalInformation $info;
+
+    public $searchTerm;
+
     public function confirmView($id)
     {
         $this->user = User::where('id', $id)->first();
@@ -36,7 +38,13 @@ class CustomerList extends Component
 
     public function render()
     {
-        $data['customers'] = User::with('profile')->withTrashed()->where('role_id', Role::where('name', 'Customer')->first()->id)->paginate(10);
+        $searchTerm = '%'.$this->searchTerm.'%';
+        $data['customers'] = User::with('profile')->withTrashed()
+            ->where('role_id', Role::where('name', 'Customer')->first()->id)
+            ->where('user_no', 'like', $searchTerm)
+            ->orWhere('role_id', Role::where('name', 'Customer')->first()->id)
+            ->where('name', 'like', $searchTerm)
+            ->paginate(10);
         return view('livewire.customer.customer-list', $data);
     }
 }

@@ -15,15 +15,6 @@ class StaffList extends Component
 {
     use WithPagination;
 
-    public $confirmingAddStaff = 'false';
-    public $confirmingStaffActiveStatus = 'false';
-
-    public User $user;
-    public PersonalInformation $info;
-
-    public $action;
-    public $message;
-
     protected $paginationTheme = 'bootstrap';
 
     protected $rules = [
@@ -35,6 +26,17 @@ class StaffList extends Component
     ];
 
     protected $listeners = ['staffUpdated' => 'remount'];
+
+    public $confirmingAddStaff = 'false';
+    public $confirmingStaffActiveStatus = 'false';
+
+    public User $user;
+    public PersonalInformation $info;
+
+    public $action;
+    public $message;
+
+    public $searchTerm;
 
     public function mount()
     {
@@ -166,7 +168,13 @@ class StaffList extends Component
 
     public function render()
     {
-        $data['staffs'] = User::with('profile')->withTrashed()->where('role_id', Role::where('name', 'Staff')->first()->id)->paginate(10);
+        $searchTerm = '%'.$this->searchTerm.'%';
+        $data['staffs'] = User::with('profile')->withTrashed()
+            ->where('role_id', Role::where('name', 'Staff')->first()->id)
+            ->where('user_no', 'like', $searchTerm)
+            ->orWhere('role_id', Role::where('name', 'Staff')->first()->id)
+            ->where('name', 'like', $searchTerm)
+            ->paginate(10);
         return view('livewire.staff.staff-list', $data);
     }
 }
