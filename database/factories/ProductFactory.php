@@ -25,7 +25,7 @@ class ProductFactory extends Factory
             'name' => $this->faker->word(),
             'price' => mt_rand(1,100),
             'description' => $this->faker->text(),
-            'photo' => $this->faker->imageUrl(640, 480, 'cats'),
+            'photo' => 'product_images/placeholder-image.png',
         ];
     }
 }

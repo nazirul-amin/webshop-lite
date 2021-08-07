@@ -37,7 +37,7 @@
                         </div>
                     </td>
                     <td><strong>{{ $product->id }}</strong></td>
-                    <td><div class="d-flex align-items-center"><img src="{{ $product->photo }}" class="rounded-lg mr-1" width="70" alt=""> <span class="w-space-no">{{ $product->name }}</span></div></td>
+                    <td><div class="d-flex align-items-center"><img src="{{ asset('storage/'.$product->photo)}}" class="rounded-lg mr-1" width="100" alt=""> <span class="w-space-no align-self-start">{{ $product->name }}</span></div></td>
                     <td>RM{{ $product->price }}</td>
                     <td>{{ $product->description }}</td>
                     <td>
@@ -51,11 +51,11 @@
                     </td>
                     <td>
                         <div class="d-flex">
-                            <a href="#" class="btn btn-primary shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Edit" wire:click="confirmUpdateStaff({{ $product->id }})"><i class="fas fa-edit"></i></a>
+                            <a href="#" class="btn btn-primary shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Edit" wire:click="confirmUpdateProduct({{ $product->id }})"><i class="fas fa-edit"></i></a>
                             @if ($product->deleted_at)
-                                <a href="#" class="btn btn-success shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Activate" wire:click="confirmActivateStaff({{ $product->id }})"><i class="fas fa-toggle-on"></i></a>
+                                <a href="#" class="btn btn-success shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Activate" wire:click="confirmActivateProduct({{ $product->id }})"><i class="fas fa-toggle-on"></i></a>
                             @else
-                                <a href="#" class="btn btn-danger shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Deactivate" wire:click="confirmDeactivateStaff({{ $product->id }})"><i class="fas fa-trash"></i></a>
+                                <a href="#" class="btn btn-danger shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Deactivate" wire:click="confirmDeactivateProduct({{ $product->id }})"><i class="fas fa-trash"></i></a>
                             @endif
                         </div>
                     </td>
@@ -82,10 +82,14 @@
                     <div class="col-lg-6">
                         <x-jet-label value="{{ __('Photo') }}" class="mb-0" />
                         <div class="d-flex justify-content-center">
-                            <img src="{{ asset('img/placeholder-image.png') }}" width="94">
+                            @if ($productPhoto)
+                                <a href="" id="uploadImgBtn"><img src="{{ asset('storage/'.$productPhoto) }}" width="94"></a>
+                            @else
+                                <a href="" id="uploadImgBtn"><img src="{{ asset('img/placeholder-image.png') }}" width="94"></a>
+                            @endif
                         </div>
-                        <x-jet-input type="file" wire:model.debounce.500ms="product.photo" />
-                        <x-jet-input-error for="product.photo" style="display: block"></x-jet-input-error>
+                        <x-jet-input id="productPhoto" type="file" wire:model.debounce.500ms="productPhoto" hidden/>
+                        <x-jet-input-error for="productPhoto" style="display: block"></x-jet-input-error>
                     </div>
                     <div class="col-lg-6">
                         <div class="form-group">
@@ -95,7 +99,7 @@
                         </div>
                         <div class="form-group">
                             <x-jet-label value="{{ __('Price') }}" />
-                            <x-jet-input type="number" step="2" wire:model.debounce.500ms="product.price" />
+                            <x-jet-input type="number" step="1" wire:model.debounce.500ms="product.price" />
                             <x-jet-input-error for="product.price" style="display: block"></x-jet-input-error>
                         </div>
                     </div>
@@ -121,11 +125,55 @@
             @endif
             @if ($action == 'update')
                 <x-jet-button class="ml-2" type="submit" form="addProductForm">
-                    <div class="spinner-border" role="status" wire:loading wire:target="addProduct"></div>
+                    <div class="spinner-border" role="status" wire:loading wire:target="updateProduct"></div>
                     Update
                 </x-jet-button>
             @endif
         </x-slot>
     </x-jet-dialog-modal>
-</div>
 
+    <!-- Delete Staff Confirmation Modal -->
+    <x-jet-dialog-modal wire:model="confirmingProductActiveStatus">
+        <x-slot name="title">
+            {{ __($action.' Product') }}
+        </x-slot>
+
+        <x-slot name="content">
+            @if($message)
+                <div class="alert alert-success">
+                    {{ $message }}
+                </div>
+            @endif
+            {{ __('Are you sure you want to '.strtolower($action).' this product ?') }} <br>
+            {{ __('Product ID : '.$product->id) }} <br>
+            {{ __('Name : '.$product->name) }} <br>
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-jet-secondary-button wire:click="$toggle('confirmingProductActiveStatus')"
+                                    wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-jet-secondary-button>
+
+            @if ($action == 'Deactivate')
+                <x-jet-danger-button wire:click="deleteProduct({{ $product->id }})" wire:loading.attr="disabled">
+                    <div class="spinner-border" role="status" wire:loading wire:target="deleteProduct"></div>
+                    {{ $action }}
+                </x-jet-danger-button>
+            @endif
+            @if ($action == 'Activate')
+                <x-jet-button wire:click="restoreProduct({{ $product->id }})" wire:loading.attr="disabled" style="background-color: #1cc88a; border-color: #1cc88a">
+                    <div class="spinner-border" role="status" wire:loading wire:target="restoreProduct"></div>
+                    {{ $action }}
+                </x-jet-button>
+            @endif
+        </x-slot>
+    </x-jet-dialog-modal>
+</div>
+@push('scripts')
+    <script>
+        $("#uploadImgBtn").on('click',function () {
+            $("#productPhoto").click();
+        });
+    </script>
+@endpush
