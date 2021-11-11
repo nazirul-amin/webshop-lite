@@ -175,7 +175,7 @@
     </li>
 
     <li class="nav-item">
-        <x-jet-nav-link href="">
+        <x-jet-nav-link href="{{ route('staff.leave') }}" :active="request()->routeIs('staff.leave')">
             <i class="fas fa-glass-cheers"></i>
             {{ __('Leave') }}
         </x-jet-nav-link>

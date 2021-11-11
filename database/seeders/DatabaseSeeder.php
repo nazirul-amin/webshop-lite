@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\CustomerInformation;
 use App\Models\Product;
-use App\Models\Role;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\Sequence;
+use App\Models\StaffInformation;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -25,7 +23,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
         ]);
 
-        User::factory()->count(50)->create();
+        CustomerInformation::factory()->count(500)->create();
+        StaffInformation::factory()->count(20)->create();
         Product::factory()->count(50)->create();
     }
 }

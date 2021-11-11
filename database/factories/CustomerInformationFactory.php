@@ -2,17 +2,18 @@
 
 namespace Database\Factories;
 
-use App\Models\PersonalInformation;
+use App\Models\CustomerInformation;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PersonalInformationFactory extends Factory
+class CustomerInformationFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = PersonalInformation::class;
+    protected $model = CustomerInformation::class;
 
     /**
      * Define the model's default state.
@@ -23,9 +24,9 @@ class PersonalInformationFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'identity_no' => sprintf('%02d', mt_rand(00,80)).sprintf('%02d', mt_rand(01,12)).sprintf('%02d', mt_rand(01,30)).'01'.mt_rand(1000,9999),
             'phone_no' => '011'.mt_rand(10000000,99999999),
             'age' => mt_rand(20,60),
+            'user_id' => User::factory(['role_id' => '3'])
         ];
     }
 }

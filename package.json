@@ -26,6 +26,12 @@
         "tailwindcss": "^2.0.1"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^5.15.3"
+        "@fortawesome/fontawesome-free": "^5.15.3",
+        "@fullcalendar/bootstrap": "^5.9.0",
+        "@fullcalendar/core": "^5.9.0",
+        "@fullcalendar/daygrid": "^5.9.0",
+        "@fullcalendar/list": "^5.9.0",
+        "@fullcalendar/timegrid": "^5.9.0",
+        "pikaday": "^1.8.2"
     }
 }

@@ -16,61 +16,60 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('personal_informations')->insert([
+        DB::table('users')->insert([
             [
                 'name' => 'Admin',
-                'identity_no' => '950201015501',
-                'phone_no' => '01111234566',
-                'age' => '26',
+                'email' => 'admin@webshop.com',
+                'password' => Hash::make('password'),
+                'role_id' => '1',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'name' => 'Test Staff',
-                'identity_no' => '950201015501',
-                'phone_no' => '01111234566',
-                'age' => '26',
+                'email' => 'teststaff@webshop.com',
+                'password' => Hash::make('password'),
+                'role_id' => '2',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'name' => 'Test Customer',
-                'identity_no' => '950201015501',
-                'phone_no' => '01111234566',
-                'age' => '26',
+                'email' => 'testcustomer@webshop.com',
+                'password' => Hash::make('password'),
+                'role_id' => '3',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]
         ]);
 
-        DB::table('users')->insert([
+        DB::table('staff_informations')->insert([
             [
-                'user_no' => 'ADMN'.Carbon::now()->format('Y').Carbon::now()->format('m').'00001',
+                'staff_no' => 'ADMN'.Carbon::now()->format('Y').Carbon::now()->format('m').'00001',
                 'name' => 'Admin',
-                'email' => 'admin@webshop.com',
-                'password' => Hash::make('password'),
-                'role_id' => '1',
-                'info_id' => '1',
+                'phone_no' => '01111234566',
+                'age' => '26',
+                'user_id' => '1',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'user_no' => 'STAF'.Carbon::now()->format('Y').Carbon::now()->format('m').'00001',
+                'staff_no' => 'STAF'.Carbon::now()->format('Y').Carbon::now()->format('m').'00001',
                 'name' => 'Test Staff',
-                'email' => 'teststaff@webshop.com',
-                'password' => Hash::make('password'),
-                'role_id' => '2',
-                'info_id' => '2',
+                'phone_no' => '01111234566',
+                'age' => '26',
+                'user_id' => '2',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-            ],
+            ]
+        ]);
+
+        DB::table('customer_informations')->insert([
             [
-                'user_no' => 'CUST'.Carbon::now()->format('Y').Carbon::now()->format('m').'00001',
                 'name' => 'Test Customer',
-                'email' => 'testcustomer@webshop.com',
-                'password' => Hash::make('password'),
-                'role_id' => '3',
-                'info_id' => '3',
+                'phone_no' => '01111234566',
+                'age' => '26',
+                'user_id' => '3',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]

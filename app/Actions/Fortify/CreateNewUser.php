@@ -2,7 +2,7 @@
 
 namespace App\Actions\Fortify;
 
-use App\Models\PersonalInformation;
+use App\Models\CustomerInformation;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
@@ -32,13 +32,6 @@ class CreateNewUser implements CreatesNewUsers
         ])->validate();
 
         return DB::transaction(function() use ($input) {
-            $info = PersonalInformation::create([
-                'name' => $input['name'],
-                'identity_no' => $input['identity_no'],
-                'phone_no' => $input['phone_no'],
-                'age' => $input['age'],
-            ]);
-
             $currentUserCount = User::where('role_id', Role::where('name', 'Customer')->first()->id)->count();
             $userNo = 'CUST'.Carbon::now()->format('Y').Carbon::now()->format('m').sprintf('%05d', $currentUserCount + 1);
 
@@ -47,8 +40,15 @@ class CreateNewUser implements CreatesNewUsers
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'role_id' => Role::where('name', 'Customer')->first()->id,
-                'info_id' => $info->id,
                 'password' => Hash::make($input['password']),
+            ]);
+
+            CustomerInformation::create([
+                'name' => $input['name'],
+                'identity_no' => $input['identity_no'],
+                'phone_no' => $input['phone_no'],
+                'age' => $input['age'],
+                'user_id' => $user->id,
             ]);
 
             return $user;

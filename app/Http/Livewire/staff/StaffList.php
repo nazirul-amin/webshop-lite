@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\Staff;
 
-use App\Models\PersonalInformation;
 use App\Models\Role;
+use App\Models\StaffInformation;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +20,6 @@ class StaffList extends Component
     protected $rules = [
         'user.name' => 'required|min:6',
         'user.email' => 'required|email|unique:users,email',
-        'info.identity_no' => 'required|numeric',
         'info.phone_no' => 'required|digits_between:11,13',
         'info.age' => 'required|digits:2',
     ];
@@ -31,7 +30,7 @@ class StaffList extends Component
     public $confirmingStaffActiveStatus = 'false';
 
     public User $user;
-    public PersonalInformation $info;
+    public StaffInformation $info;
 
     public $action;
     public $message;
@@ -41,13 +40,13 @@ class StaffList extends Component
     public function mount()
     {
         $this->user = new User;
-        $this->info = new PersonalInformation;
+        $this->info = new StaffInformation;
     }
 
     public function remount()
     {
         $this->user = new User;
-        $this->info = new PersonalInformation;
+        $this->info = new StaffInformation;
         sleep(1);
         $this->reset('message');
     }
@@ -60,6 +59,9 @@ class StaffList extends Component
     /* show modal */
         public function confirmAddStaff()
         {
+            $this->user = new User;
+            $this->info = new StaffInformation;
+            $this->reset('message');
             $this->action = 'add';
             $this->confirmingAddStaff = 'true';
         }
@@ -67,8 +69,8 @@ class StaffList extends Component
         public function confirmUpdateStaff($id)
         {
             $this->action = 'update';
-            $this->user = User::where('id', $id)->withTrashed()->first();
-            $this->info = PersonalInformation::where('id', $this->user->info_id)->withTrashed()->first();
+            $this->info = StaffInformation::where('id', $id)->withTrashed()->first();
+            $this->user = User::where('id', $this->info->user_id)->withTrashed()->first();
             $this->confirmingAddStaff = 'true';
         }
 
@@ -94,17 +96,17 @@ class StaffList extends Component
         $this->validate();
 
         DB::transaction(function() {
-            $this->info->name = $this->user->name;
-            $this->info->save();
-
             $currentUserCount = User::where('role_id', Role::where('name', 'Staff')->first()->id)->count();
-            $userNo = 'STAF'.Carbon::now()->format('Y').Carbon::now()->format('m').sprintf('%05d', $currentUserCount + 1);
+            $staffNo = 'STAF'.Carbon::now()->format('Y').Carbon::now()->format('m').sprintf('%05d', $currentUserCount + 1);
 
-            $this->user->user_no = $userNo;
             $this->user->role_id = Role::where('name', 'Staff')->first()->id;
-            $this->user->info_id = $this->info->id;
             $this->user->password = Hash::make('password');
             $this->user->save();
+
+            $this->info->name = $this->user->name;
+            $this->user->staff_no = $staffNo;
+            $this->user->user_id = $this->user->id;
+            $this->info->save();
         });
 
         sleep(2);
@@ -169,11 +171,10 @@ class StaffList extends Component
     public function render()
     {
         $searchTerm = '%'.$this->searchTerm.'%';
-        $data['staffs'] = User::with('profile')->withTrashed()
-            ->where('role_id', Role::where('name', 'Staff')->first()->id)
-            ->where('user_no', 'like', $searchTerm)
-            ->orWhere('role_id', Role::where('name', 'Staff')->first()->id)
-            ->where('name', 'like', $searchTerm)
+        $data['staffs'] = StaffInformation::with('user')->withTrashed()
+            ->where('staff_no', 'like', $searchTerm)
+            ->orWhere('name', Role::where('name', 'Staff')->first()->id)
+            ->orWhere('phone_no', 'like', $searchTerm)
             ->paginate(10);
         return view('livewire.staff.staff-list', $data);
     }

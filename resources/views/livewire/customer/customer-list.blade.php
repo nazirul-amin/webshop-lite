@@ -13,9 +13,7 @@
                         <label class="custom-control-label" for="checkAll"></label>
                     </div>
                 </th>
-                <th><strong>Customer ID</strong></th>
                 <th><strong>Name</strong></th>
-                <th><strong>Identity No</strong></th>
                 <th><strong>Phone No</strong></th>
                 <th><strong>Age</strong></th>
                 <th><strong>Status</strong></th>
@@ -23,7 +21,7 @@
             </tr>
         </x-slot>
         <x-slot name="row">
-            @foreach ($customers as $customer)
+            @forelse ($customers as $customer)
                 <tr>
                     <td>
                         <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
@@ -31,11 +29,9 @@
                             <label class="custom-control-label" for="customCheckBox2"></label>
                         </div>
                     </td>
-                    <td><strong>{{ $customer->user_no }}</strong></td>
                     <td><div class="d-flex align-items-center"><img src="images/avatar/1.jpg" class="rounded-lg mr-1" width="24" alt=""> <span class="w-space-no">{{ $customer->name }}</span></div></td>
-                    <td>{{ $customer->profile->identity_no }}</td>
-                    <td>{{ $customer->profile->phone_no }}</td>
-                    <td>{{ $customer->profile->age }}</td>
+                    <td>{{ $customer->phone_no }}</td>
+                    <td>{{ $customer->age }}</td>
                     <td>
                         <div class="d-flex align-items-center">
                             @if ($customer->deleted_at)
@@ -51,7 +47,11 @@
                         </div>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td>No data available</td>
+                </tr>
+            @endforelse
         </x-slot>
         <x-slot name="pagination">
             {{ $customers->links() }}
@@ -67,10 +67,6 @@
             <div class="form-group">
                 <x-jet-label value="{{ __('Name') }}" />
                 <x-jet-input type="text" wire:model.debounce.500ms="user.name" readonly />
-            </div>
-            <div class="form-group">
-                <x-jet-label value="{{ __('Identity No') }}" />
-                <x-jet-input type="text" wire:model.debounce.500ms="info.identity_no" readonly />
             </div>
             <div class="form-group">
                 <x-jet-label value="{{ __('Email') }}" />

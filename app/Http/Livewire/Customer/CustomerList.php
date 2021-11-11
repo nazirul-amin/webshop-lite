@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Customer;
 
-use App\Models\PersonalInformation;
+use App\Models\CustomerInformation;
 use App\Models\Role;
 use App\Models\User;
 use Livewire\Component;
@@ -17,7 +17,6 @@ class CustomerList extends Component
     protected $rules = [
         'user.name' => 'required|min:6',
         'user.email' => 'required|email|unique:users,email',
-        'info.identity_no' => 'required|numeric',
         'info.phone_no' => 'required|digits_between:11,13',
         'info.age' => 'required|digits:2',
     ];
@@ -25,25 +24,23 @@ class CustomerList extends Component
     public $confirmingView = 'false';
 
     public User $user;
-    public PersonalInformation $info;
+    public CustomerInformation $info;
 
     public $searchTerm;
 
     public function confirmView($id)
     {
-        $this->user = User::where('id', $id)->first();
-        $this->info = PersonalInformation::where('id', $this->user->info_id)->first();
+        $this->info = CustomerInformation::where('id', $id)->first();
+        $this->user = User::where('id', $this->info->user_id)->first();
         $this->confirmingView = 'true';
     }
 
     public function render()
     {
         $searchTerm = '%'.$this->searchTerm.'%';
-        $data['customers'] = User::with('profile')->withTrashed()
-            ->where('role_id', Role::where('name', 'Customer')->first()->id)
-            ->where('user_no', 'like', $searchTerm)
-            ->orWhere('role_id', Role::where('name', 'Customer')->first()->id)
+        $data['customers'] = CustomerInformation::with('user')->withTrashed()
             ->where('name', 'like', $searchTerm)
+            ->orWhere('phone_no', 'like', $searchTerm)
             ->paginate(10);
         return view('livewire.customer.customer-list', $data);
     }

@@ -18,7 +18,7 @@
                 </th>
                 <th><strong>Staff ID</strong></th>
                 <th><strong>Name</strong></th>
-                <th><strong>Identity No</strong></th>
+                <th><strong>Email</strong></th>
                 <th><strong>Phone No</strong></th>
                 <th><strong>Age</strong></th>
                 <th><strong>Status</strong></th>
@@ -26,7 +26,7 @@
             </tr>
         </x-slot>
         <x-slot name="row">
-            @foreach ($staffs as $staff)
+            @forelse ($staffs as $staff)
                 <tr>
                     <td>
                         <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
@@ -34,11 +34,11 @@
                             <label class="custom-control-label" for="customCheckBox2"></label>
                         </div>
                     </td>
-                    <td><strong>{{ $staff->user_no }}</strong></td>
+                    <td><strong>{{ $staff->staff_no }}</strong></td>
                     <td><div class="d-flex align-items-center"><img src="images/avatar/1.jpg" class="rounded-lg mr-1" width="24" alt=""> <span class="w-space-no">{{ $staff->name }}</span></div></td>
-                    <td>{{ $staff->profile->identity_no }}</td>
-                    <td>{{ $staff->profile->phone_no }}</td>
-                    <td>{{ $staff->profile->age }}</td>
+                    <td>{{ $staff->user->email }}</td>
+                    <td>{{ $staff->phone_no }}</td>
+                    <td>{{ $staff->age }}</td>
                     <td>
                         <div class="d-flex align-items-center">
                             @if ($staff->deleted_at)
@@ -59,7 +59,11 @@
                         </div>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td>No data available</td>
+                </tr>
+            @endforelse
         </x-slot>
         <x-slot name="pagination">
             {{ $staffs->links() }}
@@ -81,11 +85,6 @@
                     <x-jet-label value="{{ __('Name') }}" />
                     <x-jet-input type="text" wire:model.debounce.500ms="user.name" />
                     <x-jet-input-error for="user.name" style="display: block"></x-jet-input-error>
-                </div>
-                <div class="form-group">
-                    <x-jet-label value="{{ __('Identity No') }}" />
-                    <x-jet-input type="text" wire:model.debounce.500ms="info.identity_no" />
-                    <x-jet-input-error for="info.identity_no" style="display: block"></x-jet-input-error>
                 </div>
                 <div class="form-group">
                     <x-jet-label value="{{ __('Email') }}" />

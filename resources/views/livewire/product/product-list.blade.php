@@ -28,7 +28,7 @@
             </tr>
         </x-slot>
         <x-slot name="row">
-            @foreach ($products as $product)
+            @forelse ($products as $product)
                 <tr>
                     <td>
                         <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
@@ -60,7 +60,11 @@
                         </div>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td>No data available</td>
+                </tr>
+            @endforelse
         </x-slot>
         <x-slot name="pagination">
             {{ $products->links() }}
