@@ -6,6 +6,7 @@ use App\Models\Leave as ModelsLeave;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -119,10 +120,14 @@ class Leave extends Component
 
     public function cancelLeave($id)
     {
+        Gate::authorize('cancel-leave', $this->leave);
+
         $this->leave = ModelsLeave::where('id', $id)->first();
         $this->leave->approved_at = Carbon::now();
         $this->leave->approver_id = Auth::id();
         $this->leave->status = 'Cancelled';
+
+        $this->leave->save();
 
         sleep(2);
         $this->message = 'Cancelled successfully';
@@ -130,6 +135,8 @@ class Leave extends Component
 
     public function rejectLeave($id)
     {
+        Gate::authorize('approve-leave', Auth::user());
+
         $this->leave = ModelsLeave::where('id', $id)->first();
         $this->leave->approved_at = Carbon::now();
         $this->leave->approver_id = Auth::id();
@@ -143,6 +150,8 @@ class Leave extends Component
 
     public function approveLeave($id)
     {
+        Gate::authorize('approve-leave', Auth::user());
+
         $this->leave = ModelsLeave::where('id', $id)->first();
         $this->leave->approved_at = Carbon::now();
         $this->leave->approver_id = Auth::id();
@@ -167,15 +176,26 @@ class Leave extends Component
     public function render()
     {
         $searchTerm = '%'.$this->searchTerm.'%';
-        $data['leaves'] = ModelsLeave::with('user:id,name')->where('staff_id', Auth::id())
-            ->where('applied_at', 'like', $searchTerm)
-            ->orWhere('staff_id', Auth::id())
-            ->where('approved_at', 'like', $searchTerm)
-            ->orWhere('staff_id', Auth::id())
-            ->where('type', 'like', $searchTerm)
-            ->orWhere('staff_id', Auth::id())
-            ->where('reasons', 'like', $searchTerm)
-            ->paginate(16);
+        if(Auth::user()->role_id != 1) {
+            $data['leaves'] = ModelsLeave::with('user:id,name')->where('staff_id', Auth::id())
+                ->where('applied_at', 'like', $searchTerm)
+                ->orWhere('staff_id', Auth::id())
+                ->where('approved_at', 'like', $searchTerm)
+                ->orWhere('staff_id', Auth::id())
+                ->where('type', 'like', $searchTerm)
+                ->orWhere('staff_id', Auth::id())
+                ->where('reasons', 'like', $searchTerm)
+                ->paginate(10);
+        }
+
+        if(Auth::user()->role_id == 1) {
+            $data['leaves'] = ModelsLeave::with('user:id,name')
+                ->where('applied_at', 'like', $searchTerm)
+                ->orWhere('approved_at', 'like', $searchTerm)
+                ->orWhere('type', 'like', $searchTerm)
+                ->orWhere('reasons', 'like', $searchTerm)
+                ->paginate(10);
+        }
         return view('livewire.staff.leave', $data);
     }
 }

@@ -1,12 +1,14 @@
 <div>
     <x-table>
         <x-slot name="title">
-            Leave List
+            Leave History
         </x-slot>
         <x-slot name="action">
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" wire:click.prevent="confirmAddLeave">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Apply Leave
-            </a>
+            @if (Auth::user()->role_id == 1)
+                <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" wire:click.prevent="confirmAddLeave">
+                    <i class="fas fa-plus fa-sm text-white-50"></i> Apply Leave
+                </a>
+            @endif
         </x-slot>
         <x-slot name="header">
             <tr style="d-flex">
@@ -43,14 +45,19 @@
                         <td><span class="badge badge-pill badge-success mr-1">Approved</span></td>
                     @endif
                     @if ($leave->status == 'Rejected')
-                        <td><span class="badge badge-pill badge-danger mr-1">Rejected</span></td>
+                        <td><span class="badge badge-pill badge-warning mr-1">Rejected</span></td>
+                    @endif
+                    @if ($leave->status == 'Cancelled')
+                        <td><span class="badge badge-pill badge-danger mr-1">Cancelled</span></td>
                     @endif
                     <td>{{ $leave->reasons }}</td>
                     <td>
                         <div class="d-flex">
                             <a href="#" class="btn btn-primary shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Edit" wire:click="confirmUpdateLeave({{ $leave->id }})"><i class="fas fa-edit"></i></a>
-                            <a href="#" class="btn btn-success shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Approve" wire:click="confirmApproveLeave({{ $leave->id }})"><i class="fas fa-check-circle"></i></a>
-                            <a href="#" class="btn btn-danger shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Reject" wire:click="confirmRejectLeave({{ $leave->id }})"><i class="fas fa-times-circle"></i></a>
+                            @if (Auth::user()->role_id == 1)
+                                <a href="#" class="btn btn-success shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Approve" wire:click="confirmApproveLeave({{ $leave->id }})"><i class="fas fa-check-circle"></i></a>
+                                <a href="#" class="btn btn-danger shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Reject" wire:click="confirmRejectLeave({{ $leave->id }})"><i class="fas fa-times-circle"></i></a>
+                            @endif
                             @if ($leave->staff_id == auth()->user()->id)
                                 <a href="#" class="btn btn-danger shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Cancel" wire:click="confirmCancelLeave({{ $leave->id }})"><i class="fas fa-trash"></i></a>
                             @endif
