@@ -15,7 +15,7 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('permissions')->insert([
+        /* DB::table('permissions')->insert([
             [
                 'name' => 'Admin',
                 'created_at' => Carbon::now(),
@@ -31,6 +31,6 @@ class PermissionSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]
-        ]);
+        ]); */
     }
 }
