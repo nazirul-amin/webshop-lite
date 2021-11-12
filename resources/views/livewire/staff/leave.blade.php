@@ -4,7 +4,7 @@
             Leave History
         </x-slot>
         <x-slot name="action">
-            @if (Auth::user()->role_id == 1)
+            @if (Auth::user()->role_id == 2)
                 <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" wire:click.prevent="confirmAddLeave">
                     <i class="fas fa-plus fa-sm text-white-50"></i> Apply Leave
                 </a>
@@ -18,16 +18,15 @@
                         <label class="custom-control-label" for="checkAll"></label>
                     </div>
                 </th>
-                <th class="col-2"><strong>Applied Date</strong></th>
-                <th class="col-2"><strong>Approval Date</strong></th>
+                <th class="col-2"><strong>From - To Date</strong></th>
                 <th class="col-1"><strong>Type</strong></th>
-                <th class="col-1"><strong>Status</strong></th>
-                <th class="col-4"><strong>Reasons</strong></th>
+                <th class="col-3"><strong>Status</strong></th>
+                <th class="col-3"><strong>Reasons</strong></th>
                 <th class="col-1"><strong>Action</strong></th>
             </tr>
         </x-slot>
         <x-slot name="row">
-            @forelse ($leaves as $leave)
+            @forelse ($leaves as $row)
                 <tr>
                     <td>
                         <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
@@ -35,31 +34,38 @@
                             <label class="custom-control-label" for="customCheckBox2"></label>
                         </div>
                     </td>
-                    <td>{{ $leave->applied_at }}</td>
-                    <td>{{ $leave->approved_at ?? '0000-00-00' }} by <span class="text-blue">{{ $leave->user->name ?? 'N/A' }}</span></td>
-                    <td>{{ $leave->type }}</td>
-                    @if ($leave->status == 'Applied')
-                        <td><span class="badge badge-pill badge-secondary mr-1">Applied</span></td>
-                    @endif
-                    @if ($leave->status == 'Approved')
-                        <td><span class="badge badge-pill badge-success mr-1">Approved</span></td>
-                    @endif
-                    @if ($leave->status == 'Rejected')
-                        <td><span class="badge badge-pill badge-warning mr-1">Rejected</span></td>
-                    @endif
-                    @if ($leave->status == 'Cancelled')
-                        <td><span class="badge badge-pill badge-danger mr-1">Cancelled</span></td>
-                    @endif
-                    <td>{{ $leave->reasons }}</td>
+                    <td>{{ $row->from }} to {{ $row->to }}</td>
+                    <td>{{ $row->type }}</td>
+                    <td>
+                        @if ($row->status == 'Applied')
+                            <span class="badge badge-pill badge-secondary mr-1">Applied</span>
+                        @endif
+                        @if ($row->status == 'Approved')
+                            <span class="badge badge-pill badge-success mr-1">Approved</span>
+                        @endif
+                        @if ($row->status == 'Rejected')
+                            <span class="badge badge-pill badge-warning mr-1">Rejected</span>
+                        @endif
+                        @if ($row->status == 'Cancelled')
+                            <span class="badge badge-pill badge-danger mr-1">Cancelled</span>
+                        @endif
+                        @if ($row->approver_id)
+                            at {{ $row->action_at }} by <span class="text-blue">{{ $row->approver->name }}
+                        @endif
+                        @if (!$row->approver_id)
+                            at {{ $row->applied_at }} by <span class="text-blue">{{ $row->staff->name }}
+                        @endif
+                    </td>
+                    <td>{{ $row->reasons }}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="#" class="btn btn-primary shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Edit" wire:click="confirmUpdateLeave({{ $leave->id }})"><i class="fas fa-edit"></i></a>
+                            <a href="#" class="btn btn-primary shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Edit" wire:click="confirmUpdateLeave({{ $row->id }})"><i class="fas fa-edit"></i></a>
                             @if (Auth::user()->role_id == 1)
-                                <a href="#" class="btn btn-success shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Approve" wire:click="confirmApproveLeave({{ $leave->id }})"><i class="fas fa-check-circle"></i></a>
-                                <a href="#" class="btn btn-danger shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Reject" wire:click="confirmRejectLeave({{ $leave->id }})"><i class="fas fa-times-circle"></i></a>
+                                <a href="#" class="btn btn-success shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Approve" wire:click="confirmApproveLeave({{ $row->id }})"><i class="fas fa-check-circle"></i></a>
+                                <a href="#" class="btn btn-danger shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Reject" wire:click="confirmRejectLeave({{ $row->id }})"><i class="fas fa-times-circle"></i></a>
                             @endif
-                            @if ($leave->staff_id == auth()->user()->id)
-                                <a href="#" class="btn btn-danger shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Cancel" wire:click="confirmCancelLeave({{ $leave->id }})"><i class="fas fa-trash"></i></a>
+                            @if ($row->staff_id == auth()->user()->id)
+                                <a href="#" class="btn btn-danger shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Cancel" wire:click="confirmCancelLeave({{ $row->id }})"><i class="fas fa-trash"></i></a>
                             @endif
                         </div>
                     </td>
@@ -142,7 +148,11 @@
                 </div>
             @endif
             {{ __('Are you sure you want to '.strtolower($action).' this Leave ?') }} <br>
-            {{ __('Leave ID : '.$leave->id) }} <br>
+            @if ($action == 'Approve' || $action == 'Reject')
+                {{ __('Staff ID : '.$leave->staff->staff_no) }} <br>
+                {{ __('Name : '.$leave->staff->name) }} <br>
+            @endif
+            {{ __('From - To : '.$leave->from.' to '.$leave->to) }} <br>
             {{ __('type : '.$leave->type) }} <br>
             {{ __('reasons : '.$leave->reasons) }} <br>
         </x-slot>

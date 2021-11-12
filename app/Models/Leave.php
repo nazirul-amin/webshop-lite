@@ -11,8 +11,13 @@ class Leave extends Model
 
     protected $guarded = ['id'];
 
-    public function user()
+    public function approver()
     {
-        return $this->hasOne(User::class, 'id', 'approver_id');
+        return $this->hasOne(StaffInformation::class, 'user_id', 'approver_id');
+    }
+
+    public function staff()
+    {
+        return $this->hasOne(StaffInformation::class, 'user_id', 'staff_id');
     }
 }
