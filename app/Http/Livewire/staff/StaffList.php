@@ -104,8 +104,8 @@ class StaffList extends Component
             $this->user->save();
 
             $this->info->name = $this->user->name;
-            $this->user->staff_no = $staffNo;
-            $this->user->user_id = $this->user->id;
+            $this->info->staff_no = $staffNo;
+            $this->info->user_id = $this->user->id;
             $this->info->save();
         });
 
@@ -140,10 +140,11 @@ class StaffList extends Component
     public function deleteStaff($id)
     {
         $user = User::find($id);
+        $info = StaffInformation::find($id);
 
-        DB::transaction(function() use ($user) {
-            $user->profile()->delete();
+        DB::transaction(function() use ($user, $info) {
             $user->delete();
+            $info->delete();
         });
 
         sleep(2);
@@ -153,10 +154,11 @@ class StaffList extends Component
     public function restoreStaff($id)
     {
         $user = User::withTrashed()->find($id);
+        $info = StaffInformation::withTrashed()->find($id);
 
-        DB::transaction(function() use ($user) {
-            $user->profile()->restore();
+        DB::transaction(function() use ($user, $info) {
             $user->restore();
+            $info->restore();
         });
 
         sleep(2);
