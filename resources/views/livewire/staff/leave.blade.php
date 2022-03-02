@@ -1,85 +1,144 @@
 <div>
-    <x-table>
-        <x-slot name="title">
-            Leave History
-        </x-slot>
-        <x-slot name="action">
-            @if (Auth::user()->role_id == 2)
-                <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" wire:click.prevent="confirmAddLeave">
-                    <i class="fas fa-plus fa-sm text-white-50"></i> Apply Leave
-                </a>
-            @endif
-        </x-slot>
-        <x-slot name="header">
-            <tr style="d-flex">
-                <th class="col-1">
-                    <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
-                        <input type="checkbox" class="custom-control-input" id="checkAll" required="">
-                        <label class="custom-control-label" for="checkAll"></label>
-                    </div>
-                </th>
-                <th class="col-2"><strong>From - To Date</strong></th>
-                <th class="col-1"><strong>Type</strong></th>
-                <th class="col-3"><strong>Status</strong></th>
-                <th class="col-3"><strong>Reasons</strong></th>
-                <th class="col-1"><strong>Action</strong></th>
-            </tr>
-        </x-slot>
-        <x-slot name="row">
-            @forelse ($leaves as $row)
-                <tr>
-                    <td>
-                        <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
-                            <input type="checkbox" class="custom-control-input" id="customCheckBox2" required="">
-                            <label class="custom-control-label" for="customCheckBox2"></label>
-                        </div>
-                    </td>
-                    <td>{{ $row->from }} to {{ $row->to }}</td>
-                    <td>{{ $row->type }}</td>
-                    <td>
-                        @if ($row->status == 'Applied')
-                            <span class="badge badge-pill badge-secondary mr-1">Applied</span>
-                        @endif
-                        @if ($row->status == 'Approved')
-                            <span class="badge badge-pill badge-success mr-1">Approved</span>
-                        @endif
-                        @if ($row->status == 'Rejected')
-                            <span class="badge badge-pill badge-warning mr-1">Rejected</span>
-                        @endif
-                        @if ($row->status == 'Cancelled')
-                            <span class="badge badge-pill badge-danger mr-1">Cancelled</span>
-                        @endif
-                        @if ($row->approver_id)
-                            at {{ $row->action_at }} by <span class="text-blue">{{ $row->approver->name }}
-                        @endif
-                        @if (!$row->approver_id)
-                            at {{ $row->applied_at }} by <span class="text-blue">{{ $row->staff->name }}
-                        @endif
-                    </td>
-                    <td>{{ $row->reasons }}</td>
-                    <td>
-                        <div class="d-flex">
-                            <a href="#" class="btn btn-primary shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Edit" wire:click="confirmUpdateLeave({{ $row->id }})"><i class="fas fa-edit"></i></a>
-                            @if (Auth::user()->role_id == 1)
-                                <a href="#" class="btn btn-success shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Approve" wire:click="confirmApproveLeave({{ $row->id }})"><i class="fas fa-check-circle"></i></a>
-                                <a href="#" class="btn btn-danger shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Reject" wire:click="confirmRejectLeave({{ $row->id }})"><i class="fas fa-times-circle"></i></a>
-                            @endif
-                            @if ($row->staff_id == auth()->user()->id)
-                                <a href="#" class="btn btn-danger shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Cancel" wire:click="confirmCancelLeave({{ $row->id }})"><i class="fas fa-trash"></i></a>
-                            @endif
-                        </div>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="7">No data available</td>
-                </tr>
-            @endforelse
-        </x-slot>
-        <x-slot name="pagination">
-            {{ $leaves->links() }}
-        </x-slot>
-    </x-table>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="applied-tab" data-toggle="tab" href="#applied" role="tab" aria-controls="applied" aria-selected="true">Applied</a>
+        </li>
+
+        @if (Auth::user()->role_id == 2)
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History</a>
+            </li>
+        @endif
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="applied" role="tabpanel" aria-labelledby="applied-tab">
+            <x-table>
+                <x-slot name="title">
+                </x-slot>
+                <x-slot name="action">
+                    @if (Auth::user()->role_id == 2)
+                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm mt-4" wire:click.prevent="confirmAddLeave">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Apply Leave
+                        </a>
+                    @endif
+                </x-slot>
+                <x-slot name="header">
+                    <tr style="d-flex">
+                        <th class="col-1">
+                            <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
+                                <input type="checkbox" class="custom-control-input" id="checkAll" required="">
+                                <label class="custom-control-label" for="checkAll"></label>
+                            </div>
+                        </th>
+                        <th class="col-2"><strong>From - To</strong></th>
+                        <th class="col-1"><strong>Type</strong></th>
+                        <th class="col-4"><strong>Reasons</strong></th>
+                        <th class="col-1"><strong>Action</strong></th>
+                    </tr>
+                </x-slot>
+                <x-slot name="row">
+                    @forelse ($leavesApplied as $row)
+                        <tr>
+                            <td>
+                                <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
+                                    <input type="checkbox" class="custom-control-input" id="customCheckBox2" required="">
+                                    <label class="custom-control-label" for="customCheckBox2"></label>
+                                </div>
+                            </td>
+                            <td>{{ \Carbon\Carbon::parse($row->from)->format('d M Y') }} - {{ \Carbon\Carbon::parse($row->to)->format('d M Y') }}</td>
+                            <td>{{ $row->type }}</td>
+                            <td>{{ $row->reasons }}</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="#" class="btn btn-primary shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Edit" wire:click="confirmUpdateLeave({{ $row->id }})"><i class="fas fa-edit"></i></a>
+                                    @if (Auth::user()->role_id == 1)
+                                        <a href="#" class="btn btn-success shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Approve" wire:click="confirmApproveLeave({{ $row->id }})"><i class="fas fa-check-circle"></i></a>
+                                        <a href="#" class="btn btn-danger shadow btn-xs sharp mr-1" data-toggle="tooltip" data-placement="top" title="Reject" wire:click="confirmRejectLeave({{ $row->id }})"><i class="fas fa-times-circle"></i></a>
+                                    @endif
+                                    @if ($row->staff_id == auth()->user()->id)
+                                        <a href="#" class="btn btn-danger shadow btn-xs sharp" data-toggle="tooltip" data-placement="top" title="Cancel" wire:click="confirmCancelLeave({{ $row->id }})"><i class="fas fa-trash"></i></a>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7">No data available</td>
+                        </tr>
+                    @endforelse
+                </x-slot>
+                <x-slot name="pagination">
+                    {{ $leavesApplied->links() }}
+                </x-slot>
+            </x-table>
+        </div>
+        @if (Auth::user()->role_id == 2)
+            <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                <x-table>
+                    <x-slot name="title">
+                    </x-slot>
+                    <x-slot name="action">
+                    </x-slot>
+                    <x-slot name="header">
+                        <tr style="d-flex">
+                            <th class="col-1">
+                                <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
+                                    <input type="checkbox" class="custom-control-input" id="checkAll" required="">
+                                    <label class="custom-control-label" for="checkAll"></label>
+                                </div>
+                            </th>
+                            <th class="col-2"><strong>From - To</strong></th>
+                            <th class="col-1"><strong>Type</strong></th>
+                            <th class="col-3"><strong>Status</strong></th>
+                            <th class="col-3"><strong>Reasons</strong></th>
+                        </tr>
+                    </x-slot>
+                    <x-slot name="row">
+                        @forelse ($leaves as $row)
+                            <tr>
+                                <td>
+                                    <div class="custom-control custom-checkbox checkbox-success check-lg mr-3">
+                                        <input type="checkbox" class="custom-control-input" id="customCheckBox2" required="">
+                                        <label class="custom-control-label" for="customCheckBox2"></label>
+                                    </div>
+                                </td>
+                                <td>{{ \Carbon\Carbon::parse($row->from)->format('d M Y') }} - {{ \Carbon\Carbon::parse($row->to)->format('d M Y') }}</td>
+                                <td>{{ $row->type }}</td>
+                                <td>
+                                    @if ($row->status == 'Applied')
+                                        <span class="badge badge-pill badge-secondary mr-1">Applied</span>
+                                    @endif
+                                    @if ($row->status == 'Approved')
+                                        <span class="badge badge-pill badge-success mr-1">Approved</span>
+                                    @endif
+                                    @if ($row->status == 'Rejected')
+                                        <span class="badge badge-pill badge-warning mr-1">Rejected</span>
+                                    @endif
+                                    @if ($row->status == 'Cancelled')
+                                        <span class="badge badge-pill badge-danger mr-1">Cancelled</span>
+                                    @endif
+                                    @if ($row->approver_id)
+                                        at {{ $row->action_at }} by <span class="text-blue">{{ $row->approver->name }}
+                                    @endif
+                                    @if (!$row->approver_id)
+                                        at {{ $row->applied_at }} by <span class="text-blue">{{ $row->staff->name }}
+                                    @endif
+                                </td>
+                                <td>{{ $row->reasons }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7">No data available</td>
+                            </tr>
+                        @endforelse
+                    </x-slot>
+                    <x-slot name="pagination">
+                        {{ $leaves->links() }}
+                    </x-slot>
+                </x-table>
+            </div>
+        @endif
+    </div>
 
     <x-jet-dialog-modal wire:model="confirmingAddLeave" maxWidth="lg">
         <x-slot name="title">
