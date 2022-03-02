@@ -177,7 +177,13 @@ class Leave extends Component
     {
         $searchTerm = '%'.$this->searchTerm.'%';
         if(Auth::user()->role_id != 1) {
-            $data['leaves'] = ModelsLeave::with('approver:user_id,name', 'staff:user_id,name')->where('staff_id', Auth::id())
+            $data['leavesApplied'] = ModelsLeave::with('approver:user_id,name', 'staff:user_id,name')
+                ->where('staff_id', Auth::id())
+                ->where('status', 'Applied')
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+
+            $data['leaves'] = ModelsLeave::with('approver:user_id,name', 'staff:user_id,name')->where('staff_id', Auth::id())->where('status', 'Applied')
                 ->where('applied_at', 'like', $searchTerm)
                 ->orWhere('staff_id', Auth::id())
                 ->where('action_at', 'like', $searchTerm)
@@ -190,7 +196,7 @@ class Leave extends Component
         }
 
         if(Auth::user()->role_id == 1) {
-            $data['leaves'] = ModelsLeave::with('approver:user_id,name', 'staff:user_id,name')
+            $data['leavesApplied'] = ModelsLeave::with('approver:user_id,name', 'staff:user_id,name')
                 ->where('applied_at', 'like', $searchTerm)
                 ->where('status', 'Applied')
                 ->orWhere('action_at', 'like', $searchTerm)
