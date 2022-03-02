@@ -168,7 +168,7 @@
     </div>
 
     <li class="nav-item">
-        <x-jet-nav-link href="">
+        <x-jet-nav-link href="{{ route('staff.attendance') }}" :active="request()->routeIs('staff.attendance')">
             <i class="fas fa-user-check"></i>
             {{ __('Attendance') }}
         </x-jet-nav-link>

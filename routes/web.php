@@ -2,6 +2,7 @@
 
 use App\Http\Livewire\Customer\CustomerList;
 use App\Http\Livewire\Product\ProductList;
+use App\Http\Livewire\Staff\Attendance;
 use App\Http\Livewire\Staff\Leave;
 use App\Http\Livewire\Staff\StaffList;
 use Illuminate\Support\Facades\Route;
@@ -30,10 +31,11 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('product')->name('produc
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->prefix('staff')->name('staff.')->group(function () {
-    Route::get('/list', StaffList::class)->name('list');
-    Route::get('/leave', Leave::class)->name('leave');
+    Route::get('/', Attendance::class)->middleware('permission:staff/attendance')->name('attendance');
+    Route::get('/list', StaffList::class)->middleware('permission:staff/list')->name('list');
+    Route::get('/leave', Leave::class)->middleware('permission:staff/leave')->name('leave');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->prefix('customer')->name('customer.')->group(function () {
-    Route::get('/list', CustomerList::class)->name('list');
+    Route::get('/', CustomerList::class)->name('list');
 });

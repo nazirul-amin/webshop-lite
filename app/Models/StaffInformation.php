@@ -14,8 +14,11 @@ class StaffInformation extends Model
     protected $table = 'staff_informations';
     protected $guarded = ['id'];
 
-    public function user()
-    {
+    public function user(){
         return $this->hasOne(User::class, 'id', 'user_id')->withTrashed();
+    }
+
+    public function attendance(){
+        return $this->hasMany(Attendance::class, 'staff_id', 'id');
     }
 }
