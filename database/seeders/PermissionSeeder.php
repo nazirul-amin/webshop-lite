@@ -15,22 +15,27 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        /* DB::table('permissions')->insert([
+        DB::table('permissions')->insert([
             [
-                'name' => 'Admin',
+                'name' => 'staff/list',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'name' => 'Staff',
+                'name' => 'staff/leave',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'name' => 'Customer',
+                'name' => 'staff/attendance',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'staff/payslip',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]
-        ]); */
+        ]);
     }
 }
