@@ -146,7 +146,7 @@
     </li>
 
     <li class="nav-item">
-        <x-jet-nav-link href="">
+        <x-jet-nav-link href="{{ route('product.purchase') }}" :active="request()->routeIs('product.purchase')">
             <i class="fas fa-list"></i>
             {{ __('Purchases') }}
         </x-jet-nav-link>
@@ -181,12 +181,12 @@
         </x-jet-nav-link>
     </li>
 
-    <li class="nav-item">
-        <x-jet-nav-link href="">
+    {{-- <li class="nav-item">
+        <x-jet-nav-link href="{{ route('staff.payslip') }}" :active="request()->routeIs('staff.payslip')">
             <i class="fas fa-money-bill"></i>
             {{ __('Payslip') }}
         </x-jet-nav-link>
-    </li>
+    </li> --}}
 
     <li class="nav-item">
         <x-jet-nav-link href="{{ route('staff.list') }}" :active="request()->routeIs('staff.list')">

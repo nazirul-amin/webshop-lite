@@ -3,6 +3,8 @@
 namespace App\Http\Livewire\Product;
 
 use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\SubProductCategory;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -20,6 +22,8 @@ class ProductList extends Component
         'product.price' => 'required',
         'product.description' => 'required',
         'productPhoto' => 'required|image|mimes:jpg,jpeg,png,svg,gif|max:2048',
+        'product.category_id' => 'required',
+        'product.sub_category_id' => 'present',
     ];
 
     protected $listeners = [
@@ -37,6 +41,12 @@ class ProductList extends Component
     public $message;
 
     public $searchTerm;
+
+    public $category = null;
+    public $subCategory = null;
+    public $categoryActive = null;
+    public $hasSubCategoryActive = false;
+    public $subCategoryActive = null;
 
     public function confirmAddProduct()
     {
@@ -65,6 +75,29 @@ class ProductList extends Component
         $this->closeMessage();
         // $this->product = Product::where('id', $id)->first();
         $this->confirmingProductActiveStatus = 'true';
+    }
+
+    public function filterCategory($id){
+        $this->hasSubCategoryActive = Product::has('subCategory')->where('category_id', $id)->exists();
+        $this->category = $id;
+        $this->categoryActive = $id;
+        $this->subCategory = null;
+        $this->subCategoryActive = null;
+        $this->resetPage();
+    }
+
+    public function filterSubCategory($subId){
+        $this->subCategory = $subId;
+        $this->subCategoryActive = $subId;
+        $this->resetPage();
+    }
+
+    public function resetFilterCategory($id, $subId){
+        $this->hasSubCategoryActive = false;
+        $this->category = null;
+        $this->categoryActive = null;
+        $this->subCategory = null;
+        $this->subCategoryActive = null;
     }
 
     public function mount()
@@ -152,12 +185,14 @@ class ProductList extends Component
 
     public function render()
     {
-        $searchTerm = '%'.$this->searchTerm.'%';
-        $data['products'] = Product::where('name', 'like', $searchTerm)
-            ->orWhere('price', 'like', $searchTerm)
-            ->orWhere('description', 'like', $searchTerm)
-            ->withTrashed()
-            ->paginate(16);
+        $data['categories'] = ProductCategory::get();
+        $data['subCategories'] = SubProductCategory::get();
+        $data['products'] = Product::when($this->category, function ($query) {
+            return $query->where('category_id', $this->category);
+        })->when($this->subCategory, function ($query) {
+            return $query->where('category_id', $this->category)->where('sub_category_id', $this->subCategory);
+        })->withTrashed()->paginate(12);
+
         return view('livewire.product.product-list', $data);
     }
 }

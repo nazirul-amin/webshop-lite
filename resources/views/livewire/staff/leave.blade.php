@@ -118,10 +118,10 @@
                                         <span class="badge badge-pill badge-danger mr-1">Cancelled</span>
                                     @endif
                                     @if ($row->approver_id)
-                                        at {{ $row->action_at }} by <span class="text-blue">{{ $row->approver->name }}
+                                        at {{ \Carbon\Carbon::parse($row->action_at)->format('d M Y') }} by <span class="text-blue">{{ $row->approver->name }}
                                     @endif
                                     @if (!$row->approver_id)
-                                        at {{ $row->applied_at }} by <span class="text-blue">{{ $row->staff->name }}
+                                        at {{ \Carbon\Carbon::parse($row->applied_at)->format('d M Y') }} by <span class="text-blue">{{ $row->staff->name }}
                                     @endif
                                 </td>
                                 <td>{{ $row->reasons }}</td>

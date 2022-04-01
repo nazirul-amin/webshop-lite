@@ -17,4 +17,10 @@ class Product extends Model
     {
         return $this->attributes['price'] = number_format($price, 2);
     }
+    public function category(){
+        return $this->hasOne(ProductCategory::class, 'id', 'category_id')->withTrashed();
+    }
+    public function subCategory(){
+        return $this->hasOne(SubProductCategory::class, 'id', 'sub_category_id')->withTrashed();
+    }
 }

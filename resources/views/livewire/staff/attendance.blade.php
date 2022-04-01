@@ -17,11 +17,6 @@
                     <x-slot name="title">
                     </x-slot>
                     <x-slot name="action">
-                        @if (Auth::user()->role_id == 2)
-                            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm mt-4" wire:click.prevent="confirmAddAttendance">
-                                <i class="fas fa-plus fa-sm text-white-50"></i> Add Record
-                            </a>
-                        @endif
                     </x-slot>
                     <x-slot name="header">
                         <tr style="d-flex">
@@ -68,6 +63,11 @@
                 <x-slot name="title">
                 </x-slot>
                 <x-slot name="action">
+                    @if (Auth::user()->role_id == 2)
+                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm mt-4" wire:click.prevent="confirmAddAttendance">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Add Record
+                        </a>
+                    @endif
                 </x-slot>
                 <x-slot name="header">
                     <tr style="d-flex">
@@ -123,7 +123,7 @@
                 @csrf
                 <div class="form-group">
                     <x-jet-label value="{{ __('Password') }}" />
-                    <x-jet-input type="text" wire:model.debounce.500ms="password" />
+                    <x-jet-input type="password" wire:model.debounce.500ms="password" />
                     <x-jet-input-error for="password" style="display: block"></x-jet-input-error>
                 </div>
             </form>

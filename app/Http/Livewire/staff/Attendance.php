@@ -24,7 +24,6 @@ class Attendance extends Component
 
     protected $listeners = [
         'AttendanceAdded' => 'remount',
-        'test' => 'closeAddAttendance',
     ];
 
     public $confirmingAddAttendance = 'false';
@@ -67,12 +66,6 @@ class Attendance extends Component
         }
     /* open up modal */
 
-    public function closeAddAttendance()
-    {
-        $this->remount();
-        $this->confirmingAddAttendance = 'false';
-    }
-
     public function addAttendance()
     {
         $this->validate();
@@ -88,7 +81,6 @@ class Attendance extends Component
 
             $this->message = 'Record added successfully';
             $this->emit('AttendanceAdded');
-            $this->closeAddAttendance();
         }else {
             $this->message = 'Wrong password';
             $this->emit('AttendanceAdded');
