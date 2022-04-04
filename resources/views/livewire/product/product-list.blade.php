@@ -1,189 +1,6 @@
 @push('styles')
-    <link href="{{ asset('css/custom/product-card.css') }}" rel="stylesheet" />
-    {{-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" /> --}}
-
-    <style type="text/css">
-        .navs {
-            padding-left: 0;
-            margin-bottom: 0;
-            list-style: none;
-        }
-        .navs>li>a {
-            position: relative;
-            display: block;
-            padding: 10px 15px;
-        }
-
-        /*panel*/
-        .panel {
-            margin-bottom: 20px;
-            border: none;
-            background-color: #fff;
-            border-radius: 4px;
-            box-shadow: 0 1px 1px rgb(0 0 0 / 5%);
-        }
-
-        .panel-heading {
-            border-color:#eff2f7 ;
-            font-size: 16px;
-            font-weight: 300;
-            padding: 10px 15px;
-            border-bottom: 1px solid transparent;
-            border-top-left-radius: 3px;
-            border-top-right-radius: 3px;
-        }
-        .panel-body {
-            padding: 15px;
-        }
-
-        .panel-title {
-            color: #2A3542;
-            font-size: 14px;
-            font-weight: 400;
-            margin-bottom: 0;
-            margin-top: 0;
-            font-family: 'Open Sans', sans-serif;
-        }
-
-
-        /*product list*/
-
-        .prod-cat li a{
-            border-bottom: 1px dashed #d9d9d9;
-            text-decoration: none;
-        }
-
-        .prod-cat li a {
-            color: #3b3b3b;
-            border-bottom: 1px dashed #d9d9d9;
-        }
-
-        .prod-cat li ul {
-            margin-left: 30px;
-        }
-
-        .prod-cat li ul li a{
-            border-bottom:none;
-        }
-        .prod-cat li ul li a:hover,.prod-cat li ul li a:focus, .prod-cat li ul li.active a , .prod-cat li a:hover,.prod-cat li a:focus, .prod-cat li a.active{
-            background: none;
-            color: #ff7261;
-        }
-
-        .pro-lab{
-            margin-right: 20px;
-            font-weight: normal;
-        }
-
-        .pro-sort {
-            padding-right: 20px;
-            float: left;
-        }
-
-        .pro-page-list {
-            margin: 5px 0 0 0;
-        }
-
-        .product-list img{
-            width: 100%;
-            border-radius: 4px 4px 0 0;
-            -webkit-border-radius: 4px 4px 0 0;
-        }
-
-        .product-list .pro-img-box {
-            position: relative;
-        }
-        .adtocart {
-            background: #4e73df;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            -webkit-border-radius: 50%;
-            color: #fff;
-            display: inline-block;
-            text-align: center;
-            border: 3px solid #fff;
-            left: 45%;
-            bottom: -25px;
-            position: absolute;
-        }
-
-        .adtocart i{
-            color: #fff;
-            font-size: 25px;
-            line-height: 42px;
-        }
-
-        .pro-title {
-            color: #5A5A5A;
-            display: inline-block;
-            margin-top: 20px;
-            font-size: 16px;
-        }
-
-        .product-list .price {
-            color:#4e73df ;
-            font-size: 15px;
-        }
-
-        .pro-img-details {
-            margin-left: -15px;
-        }
-
-        .pro-img-details img {
-            width: 100%;
-        }
-
-        .pro-d-title {
-            font-size: 16px;
-            margin-top: 0;
-        }
-
-        .product_meta {
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-            margin: 15px 0;
-        }
-
-        .product_meta span {
-            display: block;
-            margin-bottom: 10px;
-        }
-        .product_meta a, .pro-price{
-            color:#4e73df ;
-        }
-
-        .pro-price, .amount-old {
-            font-size: 18px;
-            padding: 0 10px;
-        }
-
-        .amount-old {
-            text-decoration: line-through;
-        }
-
-        .quantity {
-            width: 120px;
-        }
-
-        .pro-img-list {
-            margin: 10px 0 0 -15px;
-            width: 100%;
-            display: inline-block;
-        }
-
-        .pro-img-list a {
-            float: left;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
-
-        .pro-d-head {
-            font-size: 18px;
-            font-weight: 300;
-        }
-    </style>
+    <link href="{{ asset('css/custom/product-details.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/custom/product-lists.css') }}" rel="stylesheet" />
 @endpush
 <div>
     @if (Auth::user()->role_id == 1)
@@ -288,14 +105,14 @@
                             </div>
                             <div class="form-group">
                                 <x-jet-label value="{{ __('Price') }}" />
-                                <x-jet-input type="number" step="1" wire:model.debounce.500ms="product.price" />
+                                <x-jet-input type="number" step="any" wire:model.debounce.500ms="product.price" />
                                 <x-jet-input-error for="product.price" style="display: block"></x-jet-input-error>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <x-jet-label value="{{ __('Category') }}" />
-                                <select class="form-control" wire:model.debounce.500ms="product.category_id">
+                                <select class="form-control" wire:model.debounce.500ms="product.category_id" wire:change="onChangeCategory">
                                     <option value="">Please Choose</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -309,9 +126,10 @@
                                 <x-jet-label value="{{ __('Sub category') }}" />
                                 <select class="form-control" wire:model.debounce.500ms="product.sub_category_id">
                                     <option value="">Please Choose</option>
-                                    @foreach ($subCategories as $subCategory)
+                                    @forelse ($subCategorySelection as $subCategory)
                                         <option value="{{ $subCategory->id }}">{{ $subCategory->name }}</option>
-                                    @endforeach
+                                    @empty
+                                    @endforelse
                                 </select>
                                 <x-jet-input-error for="product.sub_category_id" style="display: block"></x-jet-input-error>
                             </div>
@@ -362,8 +180,7 @@
             </x-slot>
 
             <x-slot name="footer">
-                <x-jet-secondary-button wire:click="$toggle('confirmingProductActiveStatus')"
-                                        wire:loading.attr="disabled">
+                <x-jet-secondary-button wire:click="$toggle('confirmingProductActiveStatus')" wire:loading.attr="disabled">
                     {{ __('Cancel') }}
                 </x-jet-secondary-button>
 
@@ -446,7 +263,9 @@
                                     </select>
                                     <span class="customSelect form-control" style="display: inline-block;"><span class="customSelectInner" style="width: 209px; display: inline-block;">Small</span></span>
                                 </div>
-                                <button class="btn btn-primary" type="submit">Filter</button>
+                                <div class="text-right">
+                                    <button class="btn btn-primary" type="submit">Filter</button>
+                                </div>
                             </form>
                         </div>
                     </section>
@@ -454,7 +273,7 @@
                 <div class="col-md-9">
                     <section class="panel">
                         <div class="panel-body">
-                            <div class="pull-right">
+                            <div class="d-sm-flex align-items-end justify-content-end">
                                 <div style="margin: 5px 0 0 0;">
                                     @if ($products->lastPage() == 1)
                                         <ul class="pagination">
@@ -479,7 +298,7 @@
                             <x-product-card>
                                 <x-slot name="imgSource">{{ asset('storage/'.$product->photo) }}</x-slot>
                                 <x-slot name="addCartButton">
-                                    <a href="#" class="adtocart">
+                                    <a id="addToCartBtn" href="#" class="addtocart" wire:click="confirmAddToCart({{ $product->id }})">
                                         <i class="fa fa-shopping-cart"></i>
                                     </a>
                                 </x-slot>
@@ -487,12 +306,210 @@
                                 <x-slot name="price">RM{{ $product->price }}</x-slot>
                             </x-product-card>
                         @empty
-                            <span>No data available</span>
+                            <div class="col-lg-12">No data available</div>
                         @endforelse
                     </div>
                 </div>
             </div>
         </div>
+
+        <x-jet-dialog-modal wire:model="confirmingAddToCart" maxWidth="lg">
+            <x-slot name="title">
+            </x-slot>
+            <x-slot name="content">
+                @if($message)
+                    @livewire('component.alert-message', ['message' => $message, 'level'=>"success"])
+                @endif
+                <div class="product-content product-wrap clearfix product-deatil">
+                    <div class="row">
+                        <div class="col-md-5 col-sm-12 col-xs-12 mr-2">
+                            <div class="product-image">
+                                <div id="productImageControl" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <div class="carousel-item active">
+                                            <img class="d-block w-100" src="{{ asset('storage/'.$productPhoto) }}" alt="First slide">
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img class="d-block w-100" src="https://via.placeholder.com/250x220/87CEFA/000000" alt="Second slide">
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img class="d-block w-100" src="https://via.placeholder.com/250x220/B0C4DE/000000" alt="Third slide">
+                                        </div>
+                                    </div>
+                                    <a class="carousel-control-prev" href="#productImageControl" role="button" data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#productImageControl" role="button" data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-md-offset-1 col-sm-12 col-xs-12 ml-2">
+                            <h2 class="name">
+                                {{ $product->name }}
+                                <br>
+                                <i class="fa fa-star fa-2x text-primary"></i>
+                                <i class="fa fa-star fa-2x text-primary"></i>
+                                <i class="fa fa-star fa-2x text-primary"></i>
+                                <i class="fa fa-star fa-2x text-primary"></i>
+                                <i class="fa fa-star fa-2x text-muted"></i>
+                                <span class="fa fa-2x"><h5>(109) Votes</h5></span>
+                                <a href="javascript:void(0);">109 customer reviews</a>
+                            </h2>
+                            <hr />
+                            <h3 class="price-container">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        RM {{ $product->price }}
+                                        <small>*includes tax</small>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <input type="number" class="form-control" min="1" wire:model.debounce.500ms="productQuantity" >
+                                    </div>
+                                </div>
+                            </h3>
+                            <div class="certified">
+                                <ul>
+                                    <li>
+                                        <a href="javascript:void(0);">Delivery time<span>7 Working Days</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0);">Certified<span>Quality Assured</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <hr />
+                            <div class="description description-tabs">
+                                <ul class="nav nav-tabs">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" href="#more-information" data-toggle="tab">Product Description</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#specifications" data-toggle="tab">Specifications</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#reviews" data-toggle="tab">Reviews</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active show" id="more-information">
+                                        <br />
+                                        <strong></strong>
+                                        <br>
+                                        <p>{{ $product->description }}</p>
+                                    </div>
+                                    <div class="tab-pane fade" id="specifications">
+                                        <br />
+                                        <dl class="">
+                                            <dt>Gravina</dt>
+                                            <dd>Etiam porta sem malesuada magna mollis euismod.</dd>
+                                            <dd>Donec id elit non mi porta gravida at eget metus.</dd>
+                                            <dd>Eget lacinia odio sem nec elit.</dd>
+                                            <br />
+
+                                            <dt>Test lists</dt>
+                                            <dd>A description list is perfect for defining terms.</dd>
+                                            <br />
+
+                                            <dt>Altra porta</dt>
+                                            <dd>Vestibulum id ligula porta felis euismod semper</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="tab-pane fade" id="reviews">
+                                        <br />
+                                        <form method="post" class="well padding-bottom-10" onsubmit="return false;">
+                                            <textarea rows="2" class="form-control" placeholder="Write a review"></textarea>
+                                            <div class="margin-top-10">
+                                                <button type="submit" class="btn btn-sm btn-primary pull-right">
+                                                    Submit Review
+                                                </button>
+                                                <a href="javascript:void(0);" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="" data-original-title="Add Location"><i class="fa fa-location-arrow"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="" data-original-title="Add Voice"><i class="fa fa-microphone"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="" data-original-title="Add Photo"><i class="fa fa-camera"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-link profile-link-btn" rel="tooltip" data-placement="bottom" title="" data-original-title="Add File"><i class="fa fa-file"></i></a>
+                                            </div>
+                                        </form>
+
+                                        <div class="chat-body no-padding profile-message">
+                                            <ul>
+                                                <li class="message">
+                                                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="online" />
+                                                    <span class="message-text">
+                                                        <a href="javascript:void(0);" class="username">
+                                                            Alisha Molly
+                                                            <span class="badge">Purchase Verified</span>
+                                                            <span class="pull-right">
+                                                                <i class="fa fa-star fa-2x text-primary"></i>
+                                                                <i class="fa fa-star fa-2x text-primary"></i>
+                                                                <i class="fa fa-star fa-2x text-primary"></i>
+                                                                <i class="fa fa-star fa-2x text-primary"></i>
+                                                                <i class="fa fa-star fa-2x text-muted"></i>
+                                                            </span>
+                                                        </a>
+                                                        Can't divide were divide fish forth fish to. Was can't form the, living life grass darkness very image let unto fowl isn't in blessed fill life yielding above all moved
+                                                    </span>
+                                                    <ul class="list-inline font-xs">
+                                                        <li>
+                                                            <a href="javascript:void(0);" class="text-info"><i class="fa fa-thumbs-up"></i> This was helpful (22)</a>
+                                                        </li>
+                                                        <li class="pull-right">
+                                                            <small class="text-muted pull-right ultra-light"> Posted 1 year ago </small>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li class="message">
+                                                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="online" />
+                                                    <span class="message-text">
+                                                        <a href="javascript:void(0);" class="username">
+                                                            Aragon Zarko
+                                                            <span class="badge">Purchase Verified</span>
+                                                            <span class="pull-right">
+                                                                <i class="fa fa-star fa-2x text-primary"></i>
+                                                                <i class="fa fa-star fa-2x text-primary"></i>
+                                                                <i class="fa fa-star fa-2x text-primary"></i>
+                                                                <i class="fa fa-star fa-2x text-primary"></i>
+                                                                <i class="fa fa-star fa-2x text-primary"></i>
+                                                            </span>
+                                                        </a>
+                                                        Excellent product, love it!
+                                                    </span>
+                                                    <ul class="list-inline font-xs">
+                                                        <li>
+                                                            <a href="javascript:void(0);" class="text-info"><i class="fa fa-thumbs-up"></i> This was helpful (22)</a>
+                                                        </li>
+                                                        <li class="pull-right">
+                                                            <small class="text-muted pull-right ultra-light"> Posted 1 year ago </small>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                    <a href="javascript:void(0);" class="btn btn-primary" wire:click.prevent="addToCart">ADD TO CART</a>
+                                </div>
+                                <div class="col-sm-12 col-md-8 col-lg-8">
+                                    <div class="btn-group pull-right">
+                                        <button class="btn text-xs"><i class="fa fa-star"></i> Add to wishlist</button>
+                                        <button class="btn text-xs"><i class="fa fa-envelope"></i> Contact Seller</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </x-slot>
+            <x-slot name="footer">
+            </x-slot>
+        </x-jet-dialog-modal>
     @endif
 </div>
 @push('scripts')

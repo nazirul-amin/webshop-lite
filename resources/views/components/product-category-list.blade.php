@@ -4,6 +4,8 @@
     </header>
     <div class="panel-body">
         {{ $list }}
-        <button class="btn btn-primary mt-3" type="submit">Reset</button>
+        <div class="text-right">
+            <button class="btn btn-primary mt-3" type="button" wire:click.prevent="resetFilterCategory">Reset</button>
+        </div>
     </div>
 </section>

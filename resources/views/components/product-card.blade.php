@@ -1,7 +1,7 @@
 <div class="col-md-3">
     <section class="panel">
         <div class="pro-img-box">
-            <img src="{{ $imgSource }}" alt="" />
+            <img src="{{ $imgSource }}" alt="" height="200px" />
 
             {{ $addCartButton }}
         </div>

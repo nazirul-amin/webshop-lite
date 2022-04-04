@@ -2,9 +2,11 @@
 
 namespace App\Http\Livewire\Product;
 
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\SubProductCategory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -28,6 +30,7 @@ class ProductList extends Component
 
     protected $listeners = [
         'productAdded' => 'remount',
+        'addedToCart' => 'render',
     ];
 
     public $confirmingAddProduct = 'false';
@@ -36,6 +39,7 @@ class ProductList extends Component
     public Product $product;
 
     public $productPhoto;
+    public $productQuantity = 1;
 
     public $action;
     public $message;
@@ -47,6 +51,10 @@ class ProductList extends Component
     public $categoryActive = null;
     public $hasSubCategoryActive = false;
     public $subCategoryActive = null;
+
+    public $subCategorySelection = [];
+
+    public $confirmingAddToCart = 'false';
 
     public function confirmAddProduct()
     {
@@ -78,7 +86,7 @@ class ProductList extends Component
     }
 
     public function filterCategory($id){
-        $this->hasSubCategoryActive = Product::has('subCategory')->where('category_id', $id)->exists();
+        $this->hasSubCategoryActive = SubProductCategory::where('category_id', $id)->exists();
         $this->category = $id;
         $this->categoryActive = $id;
         $this->subCategory = null;
@@ -92,12 +100,34 @@ class ProductList extends Component
         $this->resetPage();
     }
 
-    public function resetFilterCategory($id, $subId){
+    public function resetFilterCategory(){
         $this->hasSubCategoryActive = false;
         $this->category = null;
         $this->categoryActive = null;
         $this->subCategory = null;
         $this->subCategoryActive = null;
+    }
+
+    public function confirmAddToCart($id){
+        $this->product = Product::where('id', $id)->withTrashed()->first();
+        $this->productPhoto = $this->product->photo;
+        $this->confirmingAddToCart = 'true';
+    }
+
+    public function addToCart(){
+        $cart = new Cart;
+        $cart->customer_id = Auth::id();
+        $cart->product_id = $this->product->id;
+        $cart->quantity = $this->productQuantity;
+        $cart->save();
+        $this->confirmingAddToCart = 'false';
+        $this->message = 'Added successfully';
+        $this->emit('addedToCart');
+        $this->emitTo('cart', 'addedToCart');
+    }
+
+    public function onChangeCategory(){
+        $this->subCategorySelection = SubProductCategory::where('category_id', $this->product->category_id)->get();
     }
 
     public function mount()
@@ -151,6 +181,7 @@ class ProductList extends Component
         $this->message = 'Updated successfully';
         sleep(1);
         $this->closeMessage();
+        $this->emit('productAdded');
     }
 
     public function deleteProduct($id)

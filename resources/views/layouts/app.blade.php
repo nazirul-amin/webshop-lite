@@ -215,31 +215,7 @@
                                 </div>
                             </li>
 
-                            <li class="nav-item dropdown no-arrow mx-1">
-                                <a class="nav-link dropdown-toggle" href="#" id="shoppingCartDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-shopping-cart fa-fw"></i>
-                                    <!-- Counter - Messages -->
-                                    {{-- <span class="badge badge-danger badge-counter">7</span> --}}
-                                </a>
-                                <!-- Dropdown - Messages -->
-                                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="shoppingCartDropdown">
-                                    <h6 class="dropdown-header">
-                                        Shopping Cart
-                                    </h6>
-                                    <a class="dropdown-item d-flex align-items-center" href="#">
-                                        <div class="dropdown-list-image mr-3">
-                                            <img src="{{ asset('icon/puzzled_80px.png') }}" alt="">
-                                        </div>
-                                        <div>
-                                            <div class="text-truncate">Oppss your cart is empty</div>
-                                        </div>
-                                    </a>
-                                    <div class="dropdown-item d-flex align-items-center justify-content-between small text-gray-500">
-                                        <p>Items : 0</p>
-                                        <p>Total : RM 0.00</p>
-                                    </div>
-                                </div>
-                            </li>
+                            @livewire('product.cart')
 
                             <div class="topbar-divider d-none d-sm-block"></div>
 

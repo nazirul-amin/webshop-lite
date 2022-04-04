@@ -3,6 +3,7 @@
 use App\Http\Livewire\Customer\CustomerList;
 use App\Http\Livewire\Customer\Purchase;
 use App\Http\Livewire\Product\ProductList;
+use App\Http\Livewire\Product\ShoppingCart;
 use App\Http\Livewire\Staff\Attendance;
 use App\Http\Livewire\Staff\Leave;
 use App\Http\Livewire\Staff\Payslip;
@@ -32,6 +33,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::middleware(['auth:sanctum', 'verified'])->prefix('product')->name('product.')->group(function () {
     Route::get('/list', ProductList::class)->name('list');
     Route::get('/purchase', Purchase::class)->name('purchase');
+    Route::get('/cart', ShoppingCart::class)->name('cart');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->prefix('staff')->name('staff.')->group(function () {
